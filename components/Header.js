@@ -18,6 +18,7 @@ export default function Header() {
   return (
     <nav className="p-4 bg-gray-800 text-white flex justify-between">
       <Link href="/">Home</Link>
+      <Link href="/products">Products</Link>
       <div>
         {user ? (
           <>
