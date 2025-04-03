@@ -8,8 +8,8 @@ export default function Header() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
     });
 
     return () => unsubscribe();
@@ -17,8 +17,11 @@ export default function Header() {
 
   return (
     <nav className="p-4 bg-gray-800 text-white flex justify-between">
-      <Link href="/">Home</Link>
+      <Link href="/">
+        <span>Home</span>
+      </Link>
       <Link href="/products">Products</Link>
+      <Link href="/products/map">Product Map</Link>
       <div>
         {user ? (
           <>

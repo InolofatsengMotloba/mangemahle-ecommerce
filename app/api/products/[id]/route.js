@@ -19,16 +19,25 @@ export async function GET(req, { params }) {
 
     if (docSnap.exists()) {
       const productData = docSnap.data();
-      return new Response(
-        JSON.stringify({
-          id: id, // Return the ID that actually worked
-          ...productData,
-        }),
-        {
-          headers: { "Content-Type": "application/json" },
-          status: 200,
-        }
-      );
+
+      // Convert GeoPoint to a simple object with latitude and longitude
+      const serializedProduct = {
+        id: id,
+        ...productData,
+      };
+
+      // Handle GeoPoint specially
+      if (productData.location) {
+        serializedProduct.location = {
+          latitude: productData.location.latitude,
+          longitude: productData.location.longitude,
+        };
+      }
+
+      return new Response(JSON.stringify(serializedProduct), {
+        headers: { "Content-Type": "application/json" },
+        status: 200,
+      });
     } else {
       return new Response(JSON.stringify({ error: "Product not found" }), {
         headers: { "Content-Type": "application/json" },
