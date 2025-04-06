@@ -18,32 +18,47 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
+    const sort = searchParams.get("sort") || "";
+    const category = searchParams.get("category") || ""; // <-- NEW
     const page = parseInt(searchParams.get("page")) || 1;
     const lastVisibleId = searchParams.get("lastVisibleId");
     const limitPerPage = 20;
 
     const productsRef = collection(db, "products");
 
-    // Case 1: Search exists — return all matches
-    if (search) {
+    if (search || category) {
       const allSnapshot = await getDocs(productsRef);
-      const allProducts = allSnapshot.docs.map((doc) => ({
+      let allProducts = allSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      const filteredProducts = allProducts.filter((product) =>
-        fuzzyMatch(product.title, search)
-      );
+      if (search) {
+        allProducts = allProducts.filter((product) =>
+          fuzzyMatch(product.title, search)
+        );
+      }
 
-      return new Response(JSON.stringify({ products: filteredProducts }), {
+      if (category) {
+        allProducts = allProducts.filter(
+          (product) =>
+            product.category?.toLowerCase() === category.toLowerCase()
+        );
+      }
+
+      if (sort === "asc") {
+        allProducts.sort((a, b) => a.price - b.price);
+      } else if (sort === "desc") {
+        allProducts.sort((a, b) => b.price - a.price);
+      }
+
+      return new Response(JSON.stringify({ products: allProducts }), {
         status: 200,
       });
     }
 
-    // Case 2: Paginated normal listing
+    // Pagination path
     let q = query(productsRef, orderBy("id"), limit(limitPerPage));
-
     if (page > 1 && lastVisibleId) {
       const lastVisibleDoc = await getDoc(doc(db, "products", lastVisibleId));
       q = query(
@@ -55,10 +70,16 @@ export async function GET(req) {
     }
 
     const querySnapshot = await getDocs(q);
-    const products = querySnapshot.docs.map((doc) => ({
+    let products = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
+
+    if (sort === "asc") {
+      products.sort((a, b) => a.price - b.price);
+    } else if (sort === "desc") {
+      products.sort((a, b) => b.price - a.price);
+    }
 
     const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
     const newLastVisibleId = newLastVisible ? newLastVisible.id : null;
@@ -79,3 +100,6 @@ export async function GET(req) {
     });
   }
 }
+
+
+

@@ -14,21 +14,28 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [addingToCart, setAddingToCart] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [sortOption, setSortOption] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
 
-  const loadProducts = async (pageNum = 1, search = "") => {
+  const loadProducts = async (
+    pageNum = 1,
+    search = "",
+    sort = "",
+    category = ""
+  ) => {
     setLoading(true);
     try {
       let url = `/api/products?${
         search ? `search=${search}` : `page=${pageNum}`
       }`;
-      if (!search && lastVisible) {
-        url += `&lastVisibleId=${lastVisible}`;
-      }
+      if (!search && lastVisible) url += `&lastVisibleId=${lastVisible}`;
+      if (sort) url += `&sort=${sort}`;
+      if (category) url += `&category=${category}`;
 
       const res = await fetch(url);
       const data = await res.json();
 
-      if (search) {
+      if (search || category) {
         setProducts(data.products);
         setLastVisible(null);
         setPage(1);
@@ -46,14 +53,16 @@ const Products = () => {
   };
 
   useEffect(() => {
-    if (!searchQuery) {
-      loadProducts(page);
+    if (!searchQuery && !categoryFilter) {
+      loadProducts(page, "", sortOption, "");
     }
-  }, [page, searchQuery]);
+  }, [page, searchQuery, sortOption, categoryFilter]);
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    loadProducts(1, query);
+  const handleSearchSort = ({ search, sort, category }) => {
+    setSearchQuery(search);
+    setSortOption(sort);
+    setCategoryFilter(category);
+    loadProducts(1, search, sort, category);
   };
 
   const handleAddToCart = async (product) => {
@@ -84,7 +93,7 @@ const Products = () => {
   return (
     <div className="container p-6">
       <h1 className="text-2xl font-bold mb-4">Products</h1>
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSearchSort={handleSearchSort} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((product) => (
