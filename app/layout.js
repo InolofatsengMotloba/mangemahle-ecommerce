@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
           <LocationProvider>
             <CartProvider>
               <Header />
-              <main className="p-4">{children}</main>
+              <main className="min-h-screen">{children}</main>
               <Footer />
               <LocationPermission />
             </CartProvider>

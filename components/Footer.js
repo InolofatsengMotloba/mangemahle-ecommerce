@@ -3,7 +3,7 @@ export default function Footer() {
     <footer className="bg-[#5e605e] text-white py-4 mt-auto">
       <div className="container mx-auto px-4">
         <p className="text-center">
-          &copy; 2025 Mangemahle Store. All rights reserved.
+          &copy; 2024 Her Store. All rights reserved.
         </p>
       </div>
     </footer>
