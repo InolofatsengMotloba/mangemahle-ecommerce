@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -47,20 +47,13 @@ export default function Home() {
         </motion.p>
 
         {/* Button with hover animation */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Link href="/products">
-            <button className="relative bg-black text-white py-3 px-6 rounded-lg text-lg font-semibold overflow-hidden group">
-              <span className="relative z-10">Shop Now</span>
-              <div className="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </button>
-          </Link>
-        </motion.div>
+
+        <Link href="/products">
+          <button className="relative bg-black text-white py-3 px-6 rounded-lg text-lg font-semibold overflow-hidden group">
+            <span className="relative z-10">Shop Now</span>
+            <div className="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-900"></div>
+          </button>
+        </Link>
       </motion.div>
     </div>
   );
