@@ -1,58 +1,145 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { CartContext } from "@/contexts/CartContext";
-import Step1Shipping from "./Step1Shipping";
-import Step2Payment from "./Step2Payment";
-import Step3Review from "./Step3Review";
+import { auth } from "@/lib/firebase";
 
 export default function CheckoutForm() {
-  const [step, setStep] = useState(1);
-  const [shippingData, setShippingData] = useState({});
-  const [paymentData, setPaymentData] = useState({});
   const { cart, clearCart } = useContext(CartContext);
+  const [user, setUser] = useState(null);
+  const [shippingOption, setShippingOption] = useState("standard");
+  const [paymentOption, setPaymentOption] = useState("credit");
+  const [processing, setProcessing] = useState(false);
   const router = useRouter();
 
-  const next = () => setStep(step + 1);
-  const prev = () => setStep(step - 1);
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      setUser(authUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
-  const handleSubmit = () => {
-    console.log("✅ Order placed!", { shippingData, paymentData, cart });
-    clearCart();
-    router.push("/thank-you");
+  const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const shippingCost = shippingOption === "express" ? 50 : 20;
+  const grandTotal = total + shippingCost;
+
+  const handlePayments = async () => {
+    setProcessing(true);
+    // Simulate payment processing delay
+    setTimeout(() => {
+      clearCart();
+      setProcessing(false);
+      router.push("/payment");
+    }, 2000);
   };
 
   return (
-    <>
-      {step === 1 && (
-        <Step1Shipping
-          data={shippingData}
-          onNext={(data) => {
-            setShippingData(data);
-            next();
-          }}
-        />
-      )}
-      {step === 2 && (
-        <Step2Payment
-          data={paymentData}
-          onBack={prev}
-          onNext={(data) => {
-            setPaymentData(data);
-            next();
-          }}
-        />
-      )}
-      {step === 3 && (
-        <Step3Review
-          shipping={shippingData}
-          payment={paymentData}
-          cart={cart}
-          onBack={prev}
-          onSubmit={handleSubmit}
-        />
-      )}
-    </>
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow rounded-lg">
+      <h2 className="text-2xl font-bold mb-4">Checkout</h2>
+
+      {/* User Info */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">Your Details</h3>
+        <p>
+          <strong>Name:</strong> {user?.displayName || "N/A"}
+        </p>
+        <p>
+          <strong>Email:</strong> {user?.email}
+        </p>
+      </div>
+
+      {/* Order Summary */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">Order Summary</h3>
+        <ul>
+          {cart.map((item) => (
+            <li key={item.productId} className="flex justify-between mb-1">
+              <span>
+                {item.title} x {item.quantity}
+              </span>
+              <span>R{(item.price * item.quantity).toFixed(2)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Shipping Options */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">Shipping</h3>
+        <label className="block mb-2">
+          <input
+            type="radio"
+            value="standard"
+            checked={shippingOption === "standard"}
+            onChange={(e) => setShippingOption(e.target.value)}
+            className="mr-2"
+          />
+          Standard (R20)
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="express"
+            checked={shippingOption === "express"}
+            onChange={(e) => setShippingOption(e.target.value)}
+            className="mr-2"
+          />
+          Express (R50)
+        </label>
+      </div>
+
+      {/* Payment Method */}
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">Payment</h3>
+        <label className="block mb-2">
+          <input
+            type="radio"
+            value="credit"
+            checked={paymentOption === "credit"}
+            onChange={(e) => setPaymentOption(e.target.value)}
+            className="mr-2"
+          />
+          Credit Card
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="paypal"
+            checked={paymentOption === "paypal"}
+            onChange={(e) => setPaymentOption(e.target.value)}
+            className="mr-2"
+          />
+          PayPal
+        </label>
+      </div>
+
+      {/* Totals */}
+      <div className="mb-6 border-t pt-4">
+        <p className="flex justify-between">
+          <span>Subtotal:</span>
+          <span>R{total.toFixed(2)}</span>
+        </p>
+        <p className="flex justify-between">
+          <span>Shipping:</span>
+          <span>R{shippingCost.toFixed(2)}</span>
+        </p>
+        <p className="flex justify-between font-bold text-lg">
+          <span>Total:</span>
+          <span>R{grandTotal.toFixed(2)}</span>
+        </p>
+      </div>
+
+      {/* Submit */}
+      <div className="text-right">
+        <button
+          onClick={handlePayments}
+          disabled={processing}
+          className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          {processing ? "Processing..." : "Continue to Payment"}
+        </button>
+      </div>
+    </div>
   );
 }
