@@ -1,7 +1,11 @@
 export default function Footer() {
   return (
-    <>
-      <h1>Footer goes here</h1>
-    </>
+    <footer className="bg-[#5e605e] text-white py-4 mt-auto">
+      <div className="container mx-auto px-4">
+        <p className="text-center">
+          &copy; 2025 Mangemahle Store. All rights reserved.
+        </p>
+      </div>
+    </footer>
   );
 }
