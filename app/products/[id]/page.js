@@ -54,95 +54,115 @@ const ProductDetails = () => {
     : null;
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+    <div className="max-w-5xl mx-auto p-8 bg-white">
+      <div className="flex flex-col md:flex-row pt-5 mb-6 bg-white">
+        {/* Product Image */}
+        <ImageGallery
+          className="mt-6 md:mt-0 md:ml-8 flex-1"
+          images={product.images}
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-          <div>
-            {/* Product Image */}
-            <ImageGallery
-              className="mt-6 md:mt-0 md:ml-8 flex-1"
-              images={product.images}
-            />
-            <h1 className="text-3xl font-bold mb-1">{product.title}</h1>
-            <p className="text-gray-700 mb-4">{product.description}</p>
-            <p className="text-xl font-semibold text-blue-600 mb-4">
-              ${product.price}
-            </p>
-            <div className="mb-6">
-              <button
-                className={`text-sm font-medium ${
-                  product.stock > 0
-                    ? "text-white bg-[#2d7942] px-2 py-1 rounded-md"
-                    : "text-white bg-red-600 px-2 py-1 rounded-md"
-                }`}
-              >
-                {product.stock > 0 ? "In stock" : "Out of stock"}
-              </button>
-              <h3 className="text-lg font-semibold mb-2">Details</h3>
-              <p>{product.details}</p>
-            </div>
+        {/* Product Details */}
+        <div className="p-4 mt-6 md:mt-0 md:ml-8 flex-1 bg-white">
+          <h1 className="text-3xl font-bold mb-1">{product.title}</h1>
+          <p className="text-sm text-gray-700 mb-4 border-b-black">
+            {product.brand || "No brand specified"}
+          </p>
+
+          <p className="text-base text-gray-700 mb-2">{product.description}</p>
+          <p className="text-lg text-gray-700 mb-2 border-b-black font-semibold">
+            {product.category || "Uncategorized"}
+          </p>
+
+          <div className="flex flex-wrap justify-between items-center mb-3">
+            <button
+              className={`text-sm font-medium ${
+                product.stock > 0
+                  ? "text-white bg-[#2d7942] px-2 py-1 rounded-md"
+                  : "text-white bg-red-600 px-2 py-1 rounded-md"
+              }`}
+            >
+              {product.stock > 0 ? "In stock" : "Out of stock"}
+            </button>
+            <p className="text-xl font-bold">$ {product.price || "N/A"}</p>
           </div>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Location Information</h3>
-            {productLocation ? (
-              <>
-                <LocationDisplay
+          <p className="text-base text-black font-semibold mb-2">
+            Rating: {product.rating || "Not rated"}
+          </p>
+
+          {product.tags && product.tags.length > 0 && (
+            <div className="flex flex-wrap items-center mb-4">
+              <h3 className="mr-2 font-semibold">Tags:</h3>
+              {product.tags.map((tag, index) => (
+                <button
+                  key={index}
+                  className="border-2 font-bold border-black bg-white text-black m-1 px-2 py-1 rounded-md"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Location Information</h3>
+        {productLocation ? (
+          <>
+            <LocationDisplay
+              userLocation={userLocation}
+              productLocation={productLocation}
+              showDistance={true}
+            />
+
+            {userLocation && (
+              <button
+                onClick={() => setShowNavigation(!showNavigation)}
+                className="mt-4 w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                {showNavigation ? "Hide Navigation" : "Navigate to Product"}
+              </button>
+            )}
+
+            {showNavigation && userLocation && (
+              <div className="mt-4">
+                <IndoorNavigation
                   userLocation={userLocation}
                   productLocation={productLocation}
-                  showDistance={true}
                 />
-
-                {userLocation && (
-                  <button
-                    onClick={() => setShowNavigation(!showNavigation)}
-                    className="mt-4 w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    {showNavigation ? "Hide Navigation" : "Navigate to Product"}
-                  </button>
-                )}
-
-                {showNavigation && userLocation && (
-                  <div className="mt-4">
-                    <IndoorNavigation
-                      userLocation={userLocation}
-                      productLocation={productLocation}
-                    />
-                  </div>
-                )}
-              </>
-            ) : (
-              <p className="text-yellow-600">
-                This product does not have location information.
-              </p>
+              </div>
             )}
-          </div>
-        </div>
-
-        {/* Google Maps Section */}
-        {productLocation && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2">Product Location Map</h3>
-            <div className="h-80 w-full">
-              <GoogleMap
-                userLocation={userLocation}
-                productLocation={productLocation}
-                apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-                height="400px"
-              />
-            </div>
-
-            {locationError && (
-              <p className="mt-2 text-yellow-600">
-                Location error: {locationError}. Enable location services to see
-                your position on the map.
-              </p>
-            )}
-          </div>
+          </>
+        ) : (
+          <p className="text-yellow-600">
+            This product does not have location information.
+          </p>
         )}
       </div>
+
+      {/* Google Maps Section */}
+      {productLocation && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-2">Product Location Map</h3>
+          <div className=" w-full">
+            <GoogleMap
+              userLocation={userLocation}
+              productLocation={productLocation}
+              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+              height="400px"
+            />
+          </div>
+
+          {locationError && (
+            <p className="mt-2 text-yellow-600">
+              Location error: {locationError}. Enable location services to see
+              your position on the map.
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
