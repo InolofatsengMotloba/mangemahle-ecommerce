@@ -13,7 +13,9 @@
     "@react-google-maps/api": "^2.20.6",
     "dotenv": "^16.4.7",
     "firebase": "^11.6.0",
+    "firebase-admin": "^13.2.0",
     "next": "15.2.4",
+    "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
