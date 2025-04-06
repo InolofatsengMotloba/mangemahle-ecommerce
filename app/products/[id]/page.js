@@ -64,6 +64,15 @@ const ProductDetails = () => {
               ${product.price}
             </p>
             <div className="mb-6">
+              <button
+                className={`text-sm font-medium ${
+                  product.stock > 0
+                    ? "text-white bg-[#2d7942] px-2 py-1 rounded-md"
+                    : "text-white bg-red-600 px-2 py-1 rounded-md"
+                }`}
+              >
+                {product.stock > 0 ? "In stock" : "Out of stock"}
+              </button>
               <h3 className="text-lg font-semibold mb-2">Details</h3>
               <p>{product.details}</p>
             </div>
