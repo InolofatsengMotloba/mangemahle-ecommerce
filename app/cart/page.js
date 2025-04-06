@@ -128,7 +128,7 @@ const CartPage = () => {
             onClick={() => alert("Proceeding to checkout")}
             className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors"
           >
-            Proceed to Checkout
+            <Link href="/checkout">Proceed to Checkout</Link>
           </button>
         </div>
       </div>
