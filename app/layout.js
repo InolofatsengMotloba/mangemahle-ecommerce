@@ -6,7 +6,8 @@ import Footer from "@/components/Footer";
 import { LocationProvider } from "@/contexts/LocationContext";
 import LocationPermission from "@/components/LocationPermissions";
 import { CartProvider } from "@/contexts/CartContext";
-import { SessionProvider } from "next-auth/react"; // 👈 import this
+import { SessionProvider } from "next-auth/react";
+import { Geist, Geist_Mono } from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
