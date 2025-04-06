@@ -6,6 +6,7 @@ import useLocation from "@/hooks/useLocation";
 import LocationDisplay from "@/components/LocationDisplay";
 import GoogleMap from "@/components/GoogleMap";
 import IndoorNavigation from "@/components/IndoorNavigation";
+import { ImageGallery } from "@/components/ImageGallery";
 
 const ProductDetails = () => {
   const [product, setProduct] = useState(null);
@@ -59,6 +60,12 @@ const ProductDetails = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
           <div>
+            {/* Product Image */}
+            <ImageGallery
+              className="mt-6 md:mt-0 md:ml-8 flex-1"
+              images={product.images}
+            />
+            <h1 className="text-3xl font-bold mb-1">{product.title}</h1>
             <p className="text-gray-700 mb-4">{product.description}</p>
             <p className="text-xl font-semibold text-blue-600 mb-4">
               ${product.price}

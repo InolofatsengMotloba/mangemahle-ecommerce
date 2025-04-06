@@ -3,6 +3,7 @@
 import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { CartContext } from "@/contexts/CartContext";
+import { SingleImageGallery } from "@/components/ImageGallery";
 
 const Products = () => {
   const { addToCart, loading: cartLoading } = useContext(CartContext);
@@ -64,13 +65,15 @@ const Products = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container p-6">
       <h1>Products</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((product) => {
 
           return (
             <div key={product.id} className="card p-4 border rounded shadow">
+              {/* Product Image */}
+              <SingleImageGallery alt={product.name} images={product.images} />
               <h2 className="text-lg font-bold">{product.title}</h2>
               <p className="text-sm mb-2 line-clamp-2">{product.description}</p>
               <p className="text-lg font-semibold">
