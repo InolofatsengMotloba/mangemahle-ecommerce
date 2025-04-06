@@ -5,6 +5,7 @@ import {
   addItemToCart,
   updateCartItemQuantity,
   removeCartItem,
+  saveCartToFirestore, // needed for clearing cart
 } from "../lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -16,14 +17,13 @@ export const CartProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Listen to authentication state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
         loadCart(user.uid);
       } else {
         setUser(null);
-        setCart([]); // Empty cart when user logs out
+        setCart([]);
         setLoading(false);
       }
     });
@@ -51,11 +51,6 @@ export const CartProvider = ({ children }) => {
 
     try {
       setLoading(true);
-
-      // Debug what we're receiving
-      console.log("Adding to cart:", item);
-
-      // Determine correct product ID field
       const productId = item.id || item.productId;
 
       if (!productId) {
@@ -63,21 +58,15 @@ export const CartProvider = ({ children }) => {
         throw new Error("Product ID is required");
       }
 
-      // Prepare the item for storage with validation - using title instead of name
       const cartItem = {
-        productId: productId,
-        title: item.title , // Changed from name to title
+        productId,
+        title: item.title,
         price: parseFloat(item.price || 0),
         image: item.image || null,
         quantity: parseInt(item.quantity || 1),
       };
 
-      console.log("Sending to Firestore:", cartItem);
-
-      // Add item to Firestore
       await addItemToCart(user.uid, cartItem);
-
-      // Reload cart to get updated state from Firestore
       await loadCart(user.uid);
     } catch (error) {
       console.error("Error adding item to cart:", error);
@@ -92,11 +81,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       setLoading(true);
-
-      // Remove from Firestore
       await removeCartItem(user.uid, productId);
-
-      // Update local state
       setCart((prevCart) =>
         prevCart.filter((item) => item.productId !== productId)
       );
@@ -112,11 +97,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       setLoading(true);
-
-      // Update in Firestore
       await updateCartItemQuantity(user.uid, productId, quantity);
-
-      // Update local state
       setCart((prevCart) =>
         prevCart.map((item) =>
           item.productId === productId ? { ...item, quantity } : item
@@ -134,14 +115,46 @@ export const CartProvider = ({ children }) => {
 
     try {
       setLoading(true);
-
-      // Clear in Firestore by saving an empty array
       await saveCartToFirestore(user.uid, []);
-
-      // Update local state
       setCart([]);
     } catch (error) {
       console.error("Error clearing cart:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const selfCheckout = async () => {
+    if (!user) {
+      alert("Please sign in to proceed to checkout.");
+      return;
+    }
+
+    if (cart.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // Mocking a checkout process
+      const total = calculateTotal();
+      console.log("Checking out with total: R", total.toFixed(2));
+
+      // TODO: Replace this with actual payment/checkout logic
+
+      // Clear cart after successful "checkout"
+      await saveCartToFirestore(user.uid, []);
+      setCart([]);
+      alert(`Checkout successful! You paid R${total.toFixed(2)}.`);
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Checkout failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -155,6 +168,8 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
+        calculateTotal,
+        selfCheckout,
         loading,
       }}
     >
