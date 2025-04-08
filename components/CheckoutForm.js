@@ -17,15 +17,56 @@ export default function CheckoutForm() {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       setUser(authUser);
     });
-    return () => unsubscribe();
+
+    // Setup navigation warning
+    const handleBeforeUnload = (e) => {
+      const message =
+        "Your order has not been completed. If you leave now, your progress will be lost.";
+      e.preventDefault();
+      e.returnValue = message;
+      return message;
+    };
+
+    // Add event listener for tab/browser closing
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Setup history change detection for back button and other navigations
+    const handlePopState = (e) => {
+      if (
+        confirm(
+          "Your order has not been completed. If you leave now, your progress will be lost. Are you sure you want to leave?"
+        )
+      ) {
+        // User confirmed they want to leave
+        return;
+      } else {
+        // User chose to stay - prevent the navigation
+        e.preventDefault();
+        // Push a dummy state to prevent navigation
+        window.history.pushState(null, "", window.location.pathname);
+      }
+    };
+
+    // Add a history entry to enable back button detection
+    window.history.pushState(null, "", window.location.pathname);
+    window.addEventListener("popstate", handlePopState);
+
+    // Cleanup function
+    return () => {
+      unsubscribe();
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
 
   const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const shippingCost = shippingOption === "express" ? 50 : 20;
   const grandTotal = total + shippingCost;
 
-  // inside CheckoutForm.jsx
+  // Safe navigation to payment page
   const handlePayments = () => {
+    // Remove the warning for intentional navigation
+    window.onbeforeunload = null;
     router.push(`/payment`);
   };
 
