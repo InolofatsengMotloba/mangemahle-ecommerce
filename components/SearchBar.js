@@ -1,25 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import SearchInput from "./SearchInput";
+import CategorySelect from "./CategorySelect";
+import SortSelect from "./SortSelect";
 
 const SearchBar = ({ onSearchSort }) => {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("");
   const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("/api/categories");
-        const data = await res.json();
-        setCategories(data.categories || []);
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,41 +16,27 @@ const SearchBar = ({ onSearchSort }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 flex gap-4 flex-wrap">
-      <input
-        type="text"
-        placeholder="Search products..."
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="border px-4 py-2 rounded flex-1"
-      />
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white flex flex-col md:flex-row justify-between mb-4 gap-4"
+    >
+      {/* Search Bar */}
+      <div className="w-full md:w-2/3">
+        <SearchInput query={query} setQuery={setQuery} />
+      </div>
 
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        className="border px-4 py-2 rounded"
-      >
-        <option value="">All Categories</option>
-        {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </select>
-
-      <select
-        value={sort}
-        onChange={(e) => setSort(e.target.value)}
-        className="border px-4 py-2 rounded"
-      >
-        <option value="">Sort by Price</option>
-        <option value="asc">Low to High</option>
-        <option value="desc">High to Low</option>
-      </select>
-
+      {/* Filter and Sort */}
+      <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
+        <div className="w-full md:w-auto">
+          <CategorySelect category={category} setCategory={setCategory} />
+        </div>
+        <div className="w-full md:w-auto">
+          <SortSelect sort={sort} setSort={setSort} />
+        </div>
+      </div>
       <button
         type="submit"
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="px-4 py-2 bg-[#2d7942] text-white rounded-full hover:bg-[#26442e]"
       >
         Apply
       </button>
