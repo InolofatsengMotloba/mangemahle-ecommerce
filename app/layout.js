@@ -8,6 +8,7 @@ import LocationPermission from "@/components/LocationPermissions";
 import { CartProvider } from "@/contexts/CartContext";
 import { SessionProvider } from "next-auth/react";
 import { Geist, Geist_Mono } from "next/font/google";
+import { usePathname } from "next/navigation"; // <-- Import this
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,6 +21,10 @@ const geistMono = Geist_Mono({
 });
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname(); // <-- Get current route
+
+  const isHomePage = pathname === "/"; // <-- Check if it's the homepage
+
   return (
     <html lang="en">
       <body
@@ -28,9 +33,9 @@ export default function RootLayout({ children }) {
         <SessionProvider>
           <LocationProvider>
             <CartProvider>
-              <Header />
+              {!isHomePage && <Header />} {/* Hide on homepage */}
               <main className="min-h-screen">{children}</main>
-              <Footer />
+              {!isHomePage && <Footer />} {/* Hide on homepage */}
               <LocationPermission />
             </CartProvider>
           </LocationProvider>
