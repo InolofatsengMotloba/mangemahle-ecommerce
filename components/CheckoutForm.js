@@ -24,14 +24,9 @@ export default function CheckoutForm() {
   const shippingCost = shippingOption === "express" ? 50 : 20;
   const grandTotal = total + shippingCost;
 
-  const handlePayments = async () => {
-    setProcessing(true);
-    // Simulate payment processing delay
-    setTimeout(() => {
-      clearCart();
-      setProcessing(false);
-      router.push("/payment");
-    }, 2000);
+  // inside CheckoutForm.jsx
+  const handlePayments = () => {
+    router.push(`/payment`);
   };
 
   return (
@@ -58,7 +53,7 @@ export default function CheckoutForm() {
               <span>
                 {item.title} x {item.quantity}
               </span>
-              <span>R{(item.price * item.quantity).toFixed(2)}</span>
+              <span>${(item.price * item.quantity).toFixed(2)}</span>
             </li>
           ))}
         </ul>
@@ -75,7 +70,7 @@ export default function CheckoutForm() {
             onChange={(e) => setShippingOption(e.target.value)}
             className="mr-2"
           />
-          Standard (R20)
+          Standard ($20)
         </label>
         <label>
           <input
@@ -85,7 +80,7 @@ export default function CheckoutForm() {
             onChange={(e) => setShippingOption(e.target.value)}
             className="mr-2"
           />
-          Express (R50)
+          Express ($50)
         </label>
       </div>
 
@@ -118,15 +113,15 @@ export default function CheckoutForm() {
       <div className="mb-6 border-t pt-4">
         <p className="flex justify-between">
           <span>Subtotal:</span>
-          <span>R{total.toFixed(2)}</span>
+          <span>${total.toFixed(2)}</span>
         </p>
         <p className="flex justify-between">
           <span>Shipping:</span>
-          <span>R{shippingCost.toFixed(2)}</span>
+          <span>${shippingCost.toFixed(2)}</span>
         </p>
         <p className="flex justify-between font-bold text-lg">
           <span>Total:</span>
-          <span>R{grandTotal.toFixed(2)}</span>
+          <span>${grandTotal.toFixed(2)}</span>
         </p>
       </div>
 
