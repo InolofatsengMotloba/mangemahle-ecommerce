@@ -95,7 +95,7 @@ const Products = () => {
       <SearchBar onSearchSort={handleSearchSort} />
 
       {/* Product Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 pt-6">
         {products.map((product) => (
           <div
             key={product.id}
@@ -105,7 +105,7 @@ const Products = () => {
             <SingleImageGallery alt={product.name} images={product.images} />
 
             {/* Product Details */}
-            <div className="flex-1 flex flex-col p-6">
+            <div className="flex-1 flex flex-col pt-6 px-6">
               <div className="flex-1">
                 <header className="mb-2 flex-2">
                   <h2 className="text-lg line-clamp-2 font-extrabold leading-snug text-gray-700">
@@ -141,11 +141,15 @@ const Products = () => {
               </Link>
             </div>
 
-            <div className="flex flex-col space-y-2">
+            <div className="p-4 pt-0">
               <button
                 onClick={() => handleAddToCart(product)}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                disabled={addingToCart === product.id || cartLoading}
+                disabled={addingToCart === product.id}
+                className={`w-full flex items-center justify-center gap-2 rounded-2xl border border-[#2d7942] px-4 py-2 text-sm font-semibold transition-colors ${
+                  addingToCart === product.id
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-[#2d7942] text-white hover:bg-[#26442e]"
+                }`}
               >
                 {addingToCart === product.id ? "Adding..." : "Add to Cart"}
               </button>
@@ -160,7 +164,7 @@ const Products = () => {
         <div className="text-center mt-8">
           <button
             onClick={handleLoadMore}
-            className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+            className="px-4 py-2 bg-[#2d7942] text-white rounded-full hover:bg-[#26442e]"
           >
             Load More
           </button>
