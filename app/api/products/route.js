@@ -26,7 +26,7 @@ export async function GET(req) {
 
     const productsRef = collection(db, "products");
 
-    if (search || category) {
+    if (search || category || sort) {
       const allSnapshot = await getDocs(productsRef);
       let allProducts = allSnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -52,10 +52,24 @@ export async function GET(req) {
         allProducts.sort((a, b) => b.price - a.price);
       }
 
-      return new Response(JSON.stringify({ products: allProducts }), {
-        status: 200,
-      });
+      // Handle pagination in-memory:
+      const page = parseInt(searchParams.get("page")) || 1;
+      const limitPerPage = 20;
+      const paginatedProducts = allProducts.slice(
+        (page - 1) * limitPerPage,
+        page * limitPerPage
+      );
+
+      const lastVisibleId = paginatedProducts[paginatedProducts.length - 1]?.id;
+
+      return new Response(
+        JSON.stringify({ products: paginatedProducts, lastVisibleId }),
+        {
+          status: 200,
+        }
+      );
     }
+
 
     // Pagination path
     let q = query(productsRef, orderBy("id"), limit(limitPerPage));
