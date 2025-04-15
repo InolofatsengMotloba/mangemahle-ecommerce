@@ -9,6 +9,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { SessionProvider } from "next-auth/react";
 import { Poppins } from "next/font/google";
 import { usePathname } from "next/navigation";
+import BottomNav from "@/components/BottomNav";
 
 // Use Poppins as the primary font
 const poppins = Poppins({
@@ -29,8 +30,9 @@ export default function RootLayout({ children }) {
             <CartProvider>
               {!isHomePage && <Header />}
               <main className="min-h-screen">{children}</main>
-              {!isHomePage && <Footer />}
+              {/* {!isHomePage && <Footer />} */}
               <LocationPermission />
+              <BottomNav />
             </CartProvider>
           </LocationProvider>
         </SessionProvider>
