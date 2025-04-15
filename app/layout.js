@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import { LocationProvider } from "@/contexts/LocationContext";
 import LocationPermission from "@/components/LocationPermissions";
 import { CartProvider } from "@/contexts/CartContext";
-import { SessionProvider } from "next-auth/react";
 import { Poppins } from "next/font/google";
 import { usePathname } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
@@ -26,18 +25,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${poppins.variable} font-sans antialiased`}>
-        <SessionProvider>
-          <LocationProvider>
-            <CartProvider>
-              {!isHomePage && <Header />}
-              <LiveLocationBanner />
-              <main className="min-h-screen">{children}</main>
-              {/* {!isHomePage && <Footer />} */}
-              <LocationPermission />
-              <BottomNav />
-            </CartProvider>
-          </LocationProvider>
-        </SessionProvider>
+        <LocationProvider>
+          <CartProvider>
+            {!isHomePage && <Header />}
+            <LiveLocationBanner />
+            <main className="min-h-screen">{children}</main>
+            {/* {!isHomePage && <Footer />} */}
+            <LocationPermission />
+            <BottomNav />
+          </CartProvider>
+        </LocationProvider>
       </body>
     </html>
   );
