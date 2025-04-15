@@ -10,6 +10,7 @@ import { SessionProvider } from "next-auth/react";
 import { Poppins } from "next/font/google";
 import { usePathname } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
+import LiveLocationBanner from "@/components/LiveLocationBanner";
 
 // Use Poppins as the primary font
 const poppins = Poppins({
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
           <LocationProvider>
             <CartProvider>
               {!isHomePage && <Header />}
+              <LiveLocationBanner />
               <main className="min-h-screen">{children}</main>
               {/* {!isHomePage && <Footer />} */}
               <LocationPermission />
