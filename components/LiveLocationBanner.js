@@ -30,7 +30,7 @@ const LiveLocationBanner = () => {
   const displayLocation = userData?.location || location;
 
   return (
-    <div className="bg-[#f9fbf8] border-b border-gray-200 px-4 py-2 flex items-center gap-2 justify-center w-full relative z-40">
+    <div className="bg-[#f9fbf8] px-4 py-2 flex items-center gap-2 justify-center w-full relative z-40">
       <FaMapMarkerAlt className="text-[#2e4d3b]" size={18} />
       {loading ? (
         <p className="text-sm text-gray-500">Getting your location...</p>
