@@ -91,7 +91,7 @@ const Products = () => {
   };
 
   return (
-    <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12 min-h-screen">
+    <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12">
       <SearchBar onSearchSort={handleSearchSort} />
 
       {/* Product Cards */}
