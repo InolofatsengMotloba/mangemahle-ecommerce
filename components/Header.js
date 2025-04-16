@@ -1,131 +1,122 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { auth } from "../lib/firebase";
 import Logout from "./Logout";
 import CartIcon from "./CartIcon";
+import LiveLocationBanner from "./LiveLocationBanner";
+import Image from "next/image";
+import { AiOutlineUser, AiOutlineShoppingCart } from "react-icons/ai";
 
 export default function Header() {
   const [user, setUser] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
     });
-
     return () => unsubscribe();
   }, []);
 
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Elements", path: "/elements" },
+    { name: "Shop", path: "/products" },
+    { name: "Blog", path: "/blog" },
+    { name: "Pages", path: "/pages" },
+  ];
+
   return (
-    <header className="relative z-50">
-      <nav className="p-4 bg-black text-white flex justify-between items-center relative z-50">
-        {/* Logo/Brand */}
-        <div className="flex space-x-4">
+    <header className="border-b border-gray-200 relative z-50">
+      <LiveLocationBanner />
+      <nav className="flex justify-between items-center px-6 py-4 bg-white">
+        {/* Left: Search */}
+        <div className="flex items-center space-x-4">
+          <input
+            type="text"
+            placeholder="Type and hit enter"
+            className="border px-4 py-2 rounded-md text-sm focus:outline-none"
+          />
+        </div>
+
+        {/* Center: Logo */}
+        <div>
           <Link href="/">
-            <span className="font-extrabold text-lg">HerStore</span>
+            <Image
+              src="/mh-logo.png"
+              alt="Logo"
+              width={120}
+              height={70}
+              className="object-contain"
+              priority
+            />
           </Link>
         </div>
 
-        {/* Hamburger Icon (for mobile screens) */}
-        <div className="lg:hidden flex items-center">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-white focus:outline-none relative z-50"
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-6 h-6"
+        {/* Right: Icons */}
+        <div className="flex items-center space-x-6 relative">
+          {/* Profile Icon */}
+          <div className="relative">
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="focus:outline-none"
             >
-              {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
-
-        {/* Links & Cart (for desktop screens) */}
-        <div className="hidden lg:flex items-center space-x-6">
-          <Link href="/">Home</Link>
-          <Link href="/products">Products</Link>
-          <Link href="/products/map">Product Map</Link>
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <>
-                <Link href="/profile">Profile</Link>
-                <CartIcon />
-                <Logout />
-              </>
-            ) : (
-              <>
-                <Link href="/signup">Sign Up</Link>
-                <Link href="/signin">Sign In</Link>
-              </>
+              <AiOutlineUser size="24" />
+            </button>
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-32 bg-white rounded-md text-sm z-50">
+                {user ? (
+                  <>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Profile
+                    </Link>
+                    <Logout />
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/signup"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Sign Up
+                    </Link>
+                    <Link
+                      href="/signin"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Sign In
+                    </Link>
+                  </>
+                )}
+              </div>
             )}
           </div>
+
+          {/* Cart Icon */}
+          <AiOutlineShoppingCart size="24" />
         </div>
       </nav>
 
-      {/* Overlay when menu is open - positioned BELOW the nav */}
-      {isMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 top-16 bg-black bg-opacity-70 z-40"
-          onClick={() => setIsMenuOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Dropdown Menu for Mobile */}
-      {isMenuOpen && (
-        <div className="lg:hidden fixed top-16 left-0 right-0 w-full bg-black text-white p-4 flex flex-col space-y-4 shadow-lg z-50">
-          <Link href="/" onClick={() => setIsMenuOpen(false)}>
-            Home
+      {/* Navigation Links */}
+      <div className="flex justify-center space-x-6 py-2 text-sm font-medium">
+        {navLinks.map(({ name, path }) => (
+          <Link
+            key={name}
+            href={path}
+            className={`pb-1 border-b-2 ${
+              pathname === path ? "border-black" : "border-transparent"
+            } hover:border-black transition`}
+          >
+            {name}
           </Link>
-          <Link href="/products" onClick={() => setIsMenuOpen(false)}>
-            Products
-          </Link>
-          <Link href="/products/map" onClick={() => setIsMenuOpen(false)}>
-            Product Map
-          </Link>
-          {user ? (
-            <>
-              <Link href="/profile" onClick={() => setIsMenuOpen(false)}>
-                Profile
-              </Link>
-              <div onClick={() => setIsMenuOpen(false)}>
-                <CartIcon />
-              </div>
-              <Logout />
-            </>
-          ) : (
-            <>
-              <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
-                Sign Up
-              </Link>
-              <Link href="/signin" onClick={() => setIsMenuOpen(false)}>
-                Sign In
-              </Link>
-            </>
-          )}
-        </div>
-      )}
+        ))}
+      </div>
     </header>
   );
 }
