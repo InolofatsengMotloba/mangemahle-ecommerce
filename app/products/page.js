@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect, useContext } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CartContext } from "@/contexts/CartContext";
 import { SingleImageGallery } from "@/components/ImageGallery";
 import SearchBar from "@/components/SearchBar";
 
 const Products = () => {
+  const searchParams = useSearchParams();
   const { addToCart, loading: cartLoading } = useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [lastVisible, setLastVisible] = useState(null);
@@ -16,6 +18,17 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   const [sortOption, setSortOption] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+
+  useEffect(() => {
+    // Check for category in URL on initial load
+    const urlCategory = searchParams.get("category");
+    if (urlCategory) {
+      setCategoryFilter(urlCategory);
+      loadProducts(1, "", "", urlCategory);
+    } else if (!searchQuery && !categoryFilter) {
+      loadProducts(page, "", sortOption, "");
+    }
+  }, [page, searchQuery, sortOption, categoryFilter, searchParams]);
 
   const loadProducts = async (
     pageNum = 1,
