@@ -24,13 +24,17 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={`${poppins.variable} font-sans antialiased`}>
+      <body
+        className={`${poppins.variable} font-sans antialiased flex flex-col min-h-screen`}
+      >
         <LocationProvider>
           <CartProvider>
-            {!isHomePage && <Header />}
-            <LiveLocationBanner />
-            <main className="min-h-screen">{children}</main>
-            {/* {!isHomePage && <Footer />} */}
+            <div className="flex flex-col flex-1">
+              {!isHomePage && <Header />}
+              <LiveLocationBanner />
+              <main className="flex-1">{children}</main>
+              {/* {!isHomePage && <Footer />} */}
+            </div>
             <LocationPermission />
             <BottomNav />
           </CartProvider>
