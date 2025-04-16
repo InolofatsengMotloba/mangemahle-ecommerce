@@ -7,9 +7,7 @@ import { LocationProvider } from "@/contexts/LocationContext";
 import LocationPermission from "@/components/LocationPermissions";
 import { CartProvider } from "@/contexts/CartContext";
 import { Poppins } from "next/font/google";
-import { usePathname } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
-// import LiveLocationBanner from "@/components/LiveLocationBanner";
 
 // Use Poppins as the primary font
 const poppins = Poppins({
@@ -19,9 +17,6 @@ const poppins = Poppins({
 });
 
 export default function RootLayout({ children }) {
-  const pathname = usePathname();
-  const isHomePage = pathname === "/";
-
   return (
     <html lang="en">
       <body
@@ -30,8 +25,7 @@ export default function RootLayout({ children }) {
         <LocationProvider>
           <CartProvider>
             <div className="flex flex-col flex-1">
-              {!isHomePage && <Header />}
-              {/* <LiveLocationBanner /> */}
+              <Header />
               <main className="flex-1">{children}</main>
               {/* {!isHomePage && <Footer />} */}
             </div>
