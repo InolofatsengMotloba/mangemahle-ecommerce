@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SearchInput from "./SearchInput";
+// import SearchInput from "./SearchInput";
 import CategorySelect from "./CategorySelect";
 import SortSelect from "./SortSelect";
 
@@ -21,9 +21,9 @@ const SearchBar = ({ onSearchSort }) => {
       className="bg-white flex flex-col md:flex-row justify-between mb-4 gap-4"
     >
       {/* Search Bar */}
-      <div className="w-full md:w-2/3">
+      {/* <div className="w-full md:w-2/3">
         <SearchInput query={query} setQuery={setQuery} />
-      </div>
+      </div> */}
 
       {/* Filter and Sort */}
       <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
