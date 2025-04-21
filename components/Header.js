@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { auth } from "../lib/firebase";
 import Logout from "./Logout";
@@ -20,13 +20,20 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
+    // Initialize search query from URL if it exists
+    const search = searchParams.get("search");
+    if (search) {
+      setSearchQuery(decodeURIComponent(search));
+    }
+
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
     });
     return () => unsubscribe();
-  }, []);
+  }, [searchParams]);
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -38,12 +45,17 @@ export default function Header() {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+
     if (searchQuery.trim()) {
-      // Redirect to products page with search query
-      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-      // setSearchQuery(""); // Optional: Clear search after submission
-      setShowMobileSearch(false); // Close mobile search if open
+      params.set("search", encodeURIComponent(searchQuery.trim()));
+    } else {
+      params.delete("search");
     }
+
+    // Preserve other query parameters
+    router.push(`${pathname}?${params.toString()}`);
+    setShowMobileSearch(false);
   };
 
   return (

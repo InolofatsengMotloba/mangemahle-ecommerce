@@ -1,18 +1,18 @@
 "use client";
 
 import { useState, useEffect, useContext, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { CartContext } from "@/contexts/CartContext";
-import { SingleImageGallery } from "@/components/ImageGallery";
 import SearchBar from "@/components/SearchBar";
 import ProductCard from "@/components/ProductCard";
 
-// Create a client component that uses useSearchParams inside Suspense
 function ProductsContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const { addToCart } = useContext(CartContext);
 
+  // Initialize state from URL parameters
   const initialSearch = searchParams.get("search") || "";
   const initialSort = searchParams.get("sort") || "";
   const initialCategory = searchParams.get("category") || "";
@@ -26,11 +26,24 @@ function ProductsContent() {
   const [addingToCart, setAddingToCart] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Update URL when filters change
+  const updateURL = () => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("search", searchQuery);
+    if (sortOption) params.set("sort", sortOption);
+    if (categoryFilter) params.set("category", categoryFilter);
+
+    // Reset to first page when filters change
+    setPage(1);
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
   const loadProducts = async (
     pageNum = 1,
-    search = "",
-    sort = "",
-    category = ""
+    search = searchQuery,
+    sort = sortOption,
+    category = categoryFilter
   ) => {
     setLoading(true);
     try {
@@ -51,7 +64,6 @@ function ProductsContent() {
       if (search || category || pageNum === 1) {
         setProducts(data.products);
         setLastVisible(data.lastVisibleId || null);
-        setPage(1);
       } else {
         setProducts((prev) => [...prev, ...data.products]);
         setLastVisible(data.lastVisibleId || null);
@@ -63,15 +75,49 @@ function ProductsContent() {
     }
   };
 
+  // Load products when component mounts or filters change
   useEffect(() => {
-    loadProducts(1, initialSearch, initialSort, initialCategory);
-  }, [initialSearch, initialSort, initialCategory]);
+    loadProducts();
+  }, []); // Initial load
 
-  const handleSearchSort = ({ search, sort, category }) => {
-    setSearchQuery(search);
-    setSortOption(sort);
-    setCategoryFilter(category);
-    loadProducts(1, search, sort, category);
+  // Sync state with URL changes (back/forward navigation)
+  useEffect(() => {
+    const search = searchParams.get("search") || "";
+    const sort = searchParams.get("sort") || "";
+    const category = searchParams.get("category") || "";
+
+    if (
+      search !== searchQuery ||
+      sort !== sortOption ||
+      category !== categoryFilter
+    ) {
+      setSearchQuery(search);
+      setSortOption(sort);
+      setCategoryFilter(category);
+      loadProducts(1, search, sort, category);
+    }
+  }, [searchParams]);
+
+  // Handle filter changes
+  const handleFilterChange = (type, value) => {
+    switch (type) {
+      case "search":
+        setSearchQuery(value);
+        break;
+      case "sort":
+        setSortOption(value);
+        break;
+      case "category":
+        setCategoryFilter(value);
+        break;
+    }
+    updateURL();
+    loadProducts(
+      1,
+      type === "search" ? value : searchQuery,
+      type === "sort" ? value : sortOption,
+      type === "category" ? value : categoryFilter
+    );
   };
 
   const handleAddToCart = async (product) => {
@@ -97,17 +143,19 @@ function ProductsContent() {
     if (lastVisible) {
       const nextPage = page + 1;
       setPage(nextPage);
-      loadProducts(nextPage, searchQuery, sortOption, categoryFilter);
+      loadProducts(nextPage);
     }
   };
 
   return (
     <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12">
       <SearchBar
-        onSearchSort={handleSearchSort}
-        initialSearch={searchQuery}
-        initialSort={sortOption}
-        initialCategory={categoryFilter}
+        searchQuery={searchQuery}
+        setSearchQuery={(value) => handleFilterChange("search", value)}
+        sortOption={sortOption}
+        setSortOption={(value) => handleFilterChange("sort", value)}
+        categoryFilter={categoryFilter}
+        setCategoryFilter={(value) => handleFilterChange("category", value)}
       />
 
       {/* Product Cards */}
@@ -124,11 +172,17 @@ function ProductsContent() {
 
       {loading && <p className="text-center my-4">Loading...</p>}
 
+      {products.length === 0 && !loading && (
+        <p className="text-center my-4">
+          No products found matching your filters.
+        </p>
+      )}
+
       {lastVisible && !loading && !searchQuery && (
         <div className="text-center mt-8">
           <button
             onClick={handleLoadMore}
-            className="px-4 py-2 bg-[#2d7942] text-white rounded-full hover:bg-[#26442e]"
+            className="px-4 py-2 bg-[#94bb9f] text-white rounded-full hover:bg-[#385941]"
           >
             Load More
           </button>
@@ -148,7 +202,6 @@ function ProductsLoading() {
   );
 }
 
-// Main Products component with Suspense boundary
 const Products = () => {
   return (
     <Suspense fallback={<ProductsLoading />}>

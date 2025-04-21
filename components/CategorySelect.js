@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FaFilter } from "react-icons/fa";
 
-const CategorySelect = ({ category, setCategory }) => {
+const CategorySelect = () => {
   const [categories, setCategories] = useState([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentCategory = searchParams.get("category") || "";
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -20,27 +24,31 @@ const CategorySelect = ({ category, setCategory }) => {
     fetchCategories();
   }, []);
 
+  const handleChange = (e) => {
+    const selectedCategory = e.target.value;
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedCategory) {
+      params.set("category", selectedCategory);
+    } else {
+      params.delete("category");
+    }
+
+    router.push(`?${params.toString()}`);
+  };
+
   return (
-    <div className="relative flex items-center space-x-2">
-      <FaFilter className="text-[#2d7942]" />
+    <div className="relative flex items-center space-x-2 w-full">
+      <FaFilter className="text-[#94bb9f]" />
       <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        className="w-52 px-4 py-2 bg-white text-black rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2d7942] transition-all duration-300"
+        value={currentCategory}
+        onChange={handleChange}
+        className="w-full md:w-52 px-4 py-2 bg-white text-sm text-gray-600 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#2d7942] transition-all duration-300 shadow-sm"
       >
-        <option
-          value=""
-          className="px-4 py-2 text-gray-700 hover:bg-[#2d7942] hover:text-white transition-colors duration-300 rounded-md"
-        >
-          All Categories
-        </option>
+        <option value="">All Categories</option>
         {categories.map((cat) => (
-          <option
-            key={cat}
-            value={cat}
-            className="px-4 py-2 text-gray-700 hover:bg-[#2d7942] hover:text-white transition-colors duration-300 rounded-md"
-          >
-            {cat}
+          <option key={cat} value={cat}>
+            {cat.charAt(0).toUpperCase() + cat.slice(1)}
           </option>
         ))}
       </select>

@@ -1,45 +1,58 @@
 "use client";
-
-import { useState } from "react";
-// import SearchInput from "./SearchInput";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import CategorySelect from "./CategorySelect";
 import SortSelect from "./SortSelect";
 
-const SearchBar = ({ onSearchSort }) => {
-  const [query, setQuery] = useState("");
-  const [sort, setSort] = useState("");
-  const [category, setCategory] = useState("");
+const SearchBar = ({
+  searchQuery,
+  setSearchQuery,
+  sortOption,
+  setSortOption,
+  categoryFilter,
+  setCategoryFilter,
+}) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSearchSort({ search: query, sort, category });
+  const handleFilterChange = (type, value) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value) {
+      params.set(type, value);
+    } else {
+      params.delete(type);
+    }
+
+    // Remove page parameter when filters change
+    params.delete("page");
+
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white flex flex-col md:flex-row justify-between mb-4 gap-4"
-    >
-      {/* Search Bar */}
-      {/* <div className="w-full md:w-2/3">
-        <SearchInput query={query} setQuery={setQuery} />
-      </div> */}
-
+    <form className="bg-white flex flex-col md:flex-row justify-between mb-4 gap-4">
       {/* Filter and Sort */}
       <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
         <div className="w-full md:w-auto">
-          <CategorySelect category={category} setCategory={setCategory} />
+          <CategorySelect
+            value={categoryFilter}
+            onChange={(e) => {
+              setCategoryFilter(e.target.value);
+              handleFilterChange("category", e.target.value);
+            }}
+          />
         </div>
         <div className="w-full md:w-auto">
-          <SortSelect sort={sort} setSort={setSort} />
+          <SortSelect
+            sort={sortOption}
+            setSort={(value) => {
+              setSortOption(value);
+              handleFilterChange("sort", value);
+            }}
+          />
         </div>
       </div>
-      <button
-        type="submit"
-        className="px-4 py-2 bg-[#2d7942] text-white rounded-full hover:bg-[#26442e]"
-      >
-        Apply
-      </button>
     </form>
   );
 };
