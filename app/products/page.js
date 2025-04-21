@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CartContext } from "@/contexts/CartContext";
 import { SingleImageGallery } from "@/components/ImageGallery";
 import SearchBar from "@/components/SearchBar";
 
-const Products = () => {
+// Create a client component that uses useSearchParams inside Suspense
+function ProductsContent() {
   const searchParams = useSearchParams();
   const { addToCart } = useContext(CartContext);
 
@@ -23,10 +24,6 @@ const Products = () => {
   const [categoryFilter, setCategoryFilter] = useState(initialCategory);
   const [addingToCart, setAddingToCart] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadProducts(1, initialSearch, initialSort, initialCategory);
-  }, []);
 
   const loadProducts = async (
     pageNum = 1,
@@ -64,6 +61,10 @@ const Products = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadProducts(1, initialSearch, initialSort, initialCategory);
+  }, [initialSearch, initialSort, initialCategory]); // Fixed the dependency array
 
   const handleSearchSort = ({ search, sort, category }) => {
     setSearchQuery(search);
@@ -185,6 +186,26 @@ const Products = () => {
         </div>
       )}
     </div>
+  );
+}
+
+// Loading fallback to use within the Suspense boundary
+function ProductsLoading() {
+  return (
+    <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12">
+      <div className="flex justify-center items-center h-40">
+        <p className="text-xl font-medium">Loading products...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main Products component with Suspense boundary
+const Products = () => {
+  return (
+    <Suspense fallback={<ProductsLoading />}>
+      <ProductsContent />
+    </Suspense>
   );
 };
 
