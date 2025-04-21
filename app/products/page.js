@@ -9,26 +9,24 @@ import SearchBar from "@/components/SearchBar";
 
 const Products = () => {
   const searchParams = useSearchParams();
-  const { addToCart, loading: cartLoading } = useContext(CartContext);
+  const { addToCart } = useContext(CartContext);
+
+  const initialSearch = searchParams.get("search") || "";
+  const initialSort = searchParams.get("sort") || "";
+  const initialCategory = searchParams.get("category") || "";
+
   const [products, setProducts] = useState([]);
   const [lastVisible, setLastVisible] = useState(null);
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [sortOption, setSortOption] = useState(initialSort);
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
   const [addingToCart, setAddingToCart] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [sortOption, setSortOption] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
 
   useEffect(() => {
-    // Check for category in URL on initial load
-    const urlCategory = searchParams.get("category");
-    if (urlCategory) {
-      setCategoryFilter(urlCategory);
-      loadProducts(1, "", "", urlCategory);
-    } else if (!searchQuery && !categoryFilter) {
-      loadProducts(page, "", sortOption, "");
-    }
-  }, [page, searchQuery, sortOption, categoryFilter, searchParams]);
+    loadProducts(1, initialSearch, initialSort, initialCategory);
+  }, []);
 
   const loadProducts = async (
     pageNum = 1,
@@ -41,22 +39,24 @@ const Products = () => {
       let url = `/api/products?${
         search ? `search=${search}` : `page=${pageNum}`
       }`;
-      if (!search && lastVisible) url += `&lastVisibleId=${lastVisible}`;
+
+      if (!search && lastVisible && pageNum !== 1) {
+        url += `&lastVisibleId=${lastVisible}`;
+      }
+
       if (sort) url += `&sort=${sort}`;
       if (category) url += `&category=${category}`;
 
       const res = await fetch(url);
       const data = await res.json();
 
-      if (search || category) {
+      if (search || category || pageNum === 1) {
         setProducts(data.products);
-        setLastVisible(null);
+        setLastVisible(data.lastVisibleId || null);
         setPage(1);
       } else {
-        setProducts((prev) =>
-          pageNum === 1 ? data.products : [...prev, ...data.products]
-        );
-        setLastVisible(data.lastVisibleId);
+        setProducts((prev) => [...prev, ...data.products]);
+        setLastVisible(data.lastVisibleId || null);
       }
     } catch (error) {
       console.error("Error loading products:", error);
@@ -64,12 +64,6 @@ const Products = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (!searchQuery && !categoryFilter) {
-      loadProducts(page, "", sortOption, "");
-    }
-  }, [page, searchQuery, sortOption, categoryFilter]);
 
   const handleSearchSort = ({ search, sort, category }) => {
     setSearchQuery(search);
@@ -99,13 +93,20 @@ const Products = () => {
 
   const handleLoadMore = () => {
     if (lastVisible) {
-      setPage((prevPage) => prevPage + 1);
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadProducts(nextPage, searchQuery, sortOption, categoryFilter);
     }
   };
 
   return (
     <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12">
-      <SearchBar onSearchSort={handleSearchSort} />
+      <SearchBar
+        onSearchSort={handleSearchSort}
+        initialSearch={searchQuery}
+        initialSort={sortOption}
+        initialCategory={categoryFilter}
+      />
 
       {/* Product Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 pt-6">
