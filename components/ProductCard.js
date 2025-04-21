@@ -52,39 +52,42 @@ export default function ProductCard({ product, onAddToCart, isAdding }) {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-sm text-center">
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">
+          <div className="bg-white rounded-2xl shadow-lg p-6 w-[90%] max-w-sm text-center">
+            <h3 className="text-lg font-semibold mb-6 text-gray-700">
               What would you like to do?
             </h3>
-            <div className="flex justify-center gap-4">
+
+            <div className="flex flex-col gap-3">
               <button
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#2d7942] text-white hover:bg-[#1d5931] transition"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#94bb9f] hover:bg-[#385941] text-white transition-colors w-full"
                 onClick={() => {
                   onAddToCart(product);
                   setShowModal(false);
                 }}
               >
-                <FiShoppingCart size={16} />
+                <FiShoppingCart size={18} />
                 Add to Cart
               </button>
+
               <button
-                className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors w-full"
                 onClick={() => {
                   setShowModal(false);
                   // Placeholder for wishlist function
                   alert("Wishlist feature coming soon!");
                 }}
               >
-                <FiHeart size={16} />
+                <FiHeart size={18} />
                 Wishlist
               </button>
+
+              <button
+                className="mt-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
             </div>
-            <button
-              className="mt-4 text-sm text-gray-400 hover:underline"
-              onClick={() => setShowModal(false)}
-            >
-              Cancel
-            </button>
           </div>
         </div>
       )}
