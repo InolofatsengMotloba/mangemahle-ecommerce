@@ -22,7 +22,8 @@ export async function GET(req) {
     const category = searchParams.get("category") || "";
     const page = parseInt(searchParams.get("page")) || 1;
     const lastVisibleId = searchParams.get("lastVisibleId");
-    const limitPerPage = 20;
+    const reqLimit = parseInt(searchParams.get("limit")) || 20;
+    const limitPerPage = reqLimit > 50 ? 50 : reqLimit; // Set max limit to 50 for safety
 
     const productsRef = collection(db, "products");
 
@@ -40,7 +41,6 @@ export async function GET(req) {
       }
 
       if (category) {
-        // Split categories by comma and trim whitespace
         const categories = category
           .split(",")
           .map((c) => c.trim().toLowerCase());
@@ -49,10 +49,15 @@ export async function GET(req) {
         );
       }
 
+      // Enhanced sorting logic
       if (sort === "asc") {
         allProducts.sort((a, b) => a.price - b.price);
       } else if (sort === "desc") {
         allProducts.sort((a, b) => b.price - a.price);
+      } else if (sort === "rating_desc") {
+        allProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      } else if (sort === "rating_asc") {
+        allProducts.sort((a, b) => (a.rating || 0) - (b.rating || 0));
       }
 
       // Handle pagination in-memory:
@@ -71,16 +76,31 @@ export async function GET(req) {
       );
     }
 
-    // Pagination path
-    let q = query(productsRef, orderBy("id"), limit(limitPerPage));
-    if (page > 1 && lastVisibleId) {
-      const lastVisibleDoc = await getDoc(doc(db, "products", lastVisibleId));
-      q = query(
-        productsRef,
-        orderBy("id"),
-        startAfter(lastVisibleDoc),
-        limit(limitPerPage)
-      );
+    // Pagination path - modified to handle rating sorting
+    let q;
+    if (sort === "rating_desc") {
+      q = query(productsRef, orderBy("rating", "desc"), limit(limitPerPage));
+      if (page > 1 && lastVisibleId) {
+        const lastVisibleDoc = await getDoc(doc(db, "products", lastVisibleId));
+        q = query(
+          productsRef,
+          orderBy("rating", "desc"),
+          startAfter(lastVisibleDoc),
+          limit(limitPerPage)
+        );
+      }
+    } else {
+      // Default sorting by ID
+      q = query(productsRef, orderBy("id"), limit(limitPerPage));
+      if (page > 1 && lastVisibleId) {
+        const lastVisibleDoc = await getDoc(doc(db, "products", lastVisibleId));
+        q = query(
+          productsRef,
+          orderBy("id"),
+          startAfter(lastVisibleDoc),
+          limit(limitPerPage)
+        );
+      }
     }
 
     const querySnapshot = await getDocs(q);
@@ -89,10 +109,15 @@ export async function GET(req) {
       ...doc.data(),
     }));
 
+    // Client-side sorting as fallback if Firestore sorting isn't enough
     if (sort === "asc") {
       products.sort((a, b) => a.price - b.price);
     } else if (sort === "desc") {
       products.sort((a, b) => b.price - a.price);
+    } else if (sort === "rating_desc") {
+      products.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else if (sort === "rating_asc") {
+      products.sort((a, b) => (a.rating || 0) - (b.rating || 0));
     }
 
     const newLastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
