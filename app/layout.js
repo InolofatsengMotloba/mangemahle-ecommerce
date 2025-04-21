@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
             <CartProvider>
               <div className="flex flex-col flex-1">
                 <Header />
-                <main className="flex-1">{children}</main>
+                <main className="flex-1 sm:mb-20">{children}</main>
                 {/* {!isHomePage && <Footer />} */}
               </div>
               <LocationPermission />
