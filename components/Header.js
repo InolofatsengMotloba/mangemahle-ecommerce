@@ -12,6 +12,13 @@ import {
   AiOutlineSearch,
 } from "react-icons/ai";
 import SearchInput from "./SearchInput";
+import {
+  FiShoppingCart,
+  FiCreditCard,
+  FiUserPlus,
+  FiUser,
+  FiLogIn,
+} from "react-icons/fi";
 
 export default function Header() {
   const [user, setUser] = useState(null);
@@ -124,46 +131,56 @@ export default function Header() {
               <AiOutlineUser size="20" className="sm:size-6" />
             </button>
             {showDropdown && (
-              <div className="absolute right-0 mt-2 pb-2 pl-4 w-32 bg-white rounded-md shadow-lg text-sm z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 text-sm z-50 overflow-hidden">
                 {user ? (
                   <>
                     <Link
                       href="/profile"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="flex items-center px-4 py-3 hover:bg-[#f0f7f2] text-gray-700 transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
+                      <FiUser className="mr-2 text-[#94bb9f]" size={16} />
                       Profile
                     </Link>
                     <Link
                       href="/wallet"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="flex items-center px-4 py-3 hover:bg-[#f0f7f2] text-gray-700 transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
+                      <FiCreditCard className="mr-2 text-[#94bb9f]" size={16} />
                       My Wallet
                     </Link>
                     <Link
                       href="/orders"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="flex items-center px-4 py-3 hover:bg-[#f0f7f2] text-gray-700 transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
+                      <FiShoppingCart
+                        className="mr-2 text-[#94bb9f]"
+                        size={16}
+                      />
                       Orders
                     </Link>
-                    <Logout />
+                    <div className="border-t border-gray-100">
+                      <Logout className="w-full text-left px-4 py-3 hover:bg-[#f0f7f2] text-gray-700 transition-colors" />
+                    </div>
                   </>
                 ) : (
                   <>
                     <Link
                       href="/signup"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="flex items-center px-4 py-3 hover:bg-[#f0f7f2] text-gray-700 transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
+                      <FiUserPlus className="mr-2 text-[#94bb9f]" size={16} />
                       Sign Up
                     </Link>
                     <Link
                       href="/signin"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="flex items-center px-4 py-3 hover:bg-[#f0f7f2] text-gray-700 transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
+                      <FiLogIn className="mr-2 text-[#94bb9f]" size={16} />
                       Sign In
                     </Link>
                   </>
