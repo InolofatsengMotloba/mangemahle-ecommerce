@@ -5,8 +5,13 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { FiShoppingBag, FiLogIn } from "react-icons/fi";
 import RecommendedProducts from "@/components/RecommendedProducts";
+import MothersDayBanner from "@/components/Promotional Banners/MothersDay";
+import FathersDayBanner from "@/components/Promotional Banners/FathersDay";
+import PopularProducts from "@/components/PopularProducts";
 
 export default function Home() {
+  const currentMonth = new Date().getMonth() + 1; // 1-12
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -74,9 +79,20 @@ export default function Home() {
         </motion.div>
       </div>
 
+      {/* Show Mother's Day banner in April-May */}
+      {(currentMonth === 4 || currentMonth === 5) && <MothersDayBanner />}
+
       {/* Recommended Products Section */}
-      <div className="min-h-screen">
+      <div>
         <RecommendedProducts />
+      </div>
+
+      {/* Show Father's Day banner in May-June */}
+      {(currentMonth === 4 || currentMonth === 5) && <FathersDayBanner />}
+
+      {/* Popular Products Section */}
+      <div>
+        <PopularProducts />
       </div>
     </div>
   );
