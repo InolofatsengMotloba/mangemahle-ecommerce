@@ -1,11 +1,26 @@
+// hooks/useLocation.js
 import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import { updateUserLocation } from "@/lib/locationService";
+import { reverseGeocode } from "@/utils/geocode";
 
 const useLocation = () => {
   const [location, setLocation] = useState(null);
+  const [address, setAddress] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const updateAddress = async (latitude, longitude) => {
+    try {
+      const geoData = await reverseGeocode(latitude, longitude);
+      setAddress(geoData);
+      return geoData;
+    } catch (err) {
+      console.error("Error in reverse geocoding:", err);
+      setAddress(null);
+      return null;
+    }
+  };
 
   useEffect(() => {
     let watchId;
@@ -20,9 +35,10 @@ const useLocation = () => {
       try {
         // First get a quick initial position
         navigator.geolocation.getCurrentPosition(
-          (position) => {
+          async (position) => {
             const { latitude, longitude } = position.coords;
             setLocation({ latitude, longitude });
+            await updateAddress(latitude, longitude);
             setLoading(false);
 
             // Update user location in Firestore if user is logged in
@@ -40,9 +56,10 @@ const useLocation = () => {
 
         // Then start watching for position updates
         watchId = navigator.geolocation.watchPosition(
-          (position) => {
+          async (position) => {
             const { latitude, longitude } = position.coords;
             setLocation({ latitude, longitude });
+            await updateAddress(latitude, longitude);
 
             // Update user location in Firestore if user is logged in
             const user = auth.currentUser;
@@ -63,7 +80,6 @@ const useLocation = () => {
 
     startLocationTracking();
 
-    // Cleanup function to stop watching location when component unmounts
     return () => {
       if (watchId) {
         navigator.geolocation.clearWatch(watchId);
@@ -71,7 +87,7 @@ const useLocation = () => {
     };
   }, []);
 
-  return { location, error, loading };
+  return { location, address, error, loading };
 };
 
 export default useLocation;

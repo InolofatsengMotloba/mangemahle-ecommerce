@@ -1,3 +1,4 @@
+// LiveLocationBanner.js
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,7 +11,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 const LiveLocationBanner = () => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
-  const { location, loading, error } = useLocation();
+  const { location, address, loading, error } = useLocation();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -27,7 +28,33 @@ const LiveLocationBanner = () => {
     return () => unsubscribe();
   }, []);
 
-  const displayLocation = userData?.location || location;
+  const displayLocation = () => {
+    if (userData?.address) {
+      return userData.address.city
+        ? `${userData.address.city}${
+            userData.address.postalCode
+              ? `, ${userData.address.postalCode}`
+              : ""
+          }`
+        : "Unknown location";
+    }
+
+    if (address) {
+      return address.city
+        ? `${address.city}${
+            address.postalCode ? `, ${address.postalCode}` : ""
+          }`
+        : "Unknown location";
+    }
+
+    if (location) {
+      return `Lat: ${location.latitude?.toFixed(
+        2
+      )}, Lng: ${location.longitude?.toFixed(2)}`;
+    }
+
+    return "Location not available";
+  };
 
   return (
     <div className="bg-black opacity-30 px-4 py-2 flex items-center gap-2 justify-center w-full relative z-40">
@@ -41,8 +68,7 @@ const LiveLocationBanner = () => {
           {userData?.name && (
             <span className="font-medium">{userData.name} - </span>
           )}
-          Lat: {displayLocation?.latitude?.toFixed(2)}, Lng:{" "}
-          {displayLocation?.longitude?.toFixed(2)}
+          {displayLocation()}
         </p>
       )}
     </div>
