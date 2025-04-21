@@ -5,7 +5,7 @@ import { FaSearch } from "react-icons/fa";
 const SearchInput = ({ query, setQuery }) => {
   return (
     <div className="flex">
-      <div className="relative flex w-full max-w-md">
+      <div className="relative">
         <input
           type="text"
           placeholder="Search products..."
