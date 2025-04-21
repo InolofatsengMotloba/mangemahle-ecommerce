@@ -7,6 +7,13 @@ import LocationDisplay from "@/components/LocationDisplay";
 import GoogleMap from "@/components/GoogleMap";
 import IndoorNavigation from "@/components/IndoorNavigation";
 import { ImageGallery } from "@/components/ImageGallery";
+import {
+  FiShoppingCart,
+  FiMapPin,
+  FiNavigation,
+  FiStar,
+  FiTag,
+} from "react-icons/fi";
 
 const ProductDetails = () => {
   const [product, setProduct] = useState(null);
@@ -41,9 +48,28 @@ const ProductDetails = () => {
     }
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-  if (!product) return <p>Product not found.</p>;
+  if (loading)
+    return (
+      <div className="max-w-5xl mx-auto p-6 flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#94bb9f]"></div>
+      </div>
+    );
+
+
+  if (error)
+    return (
+      <div className="max-w-5xl mx-auto mt-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
+        <p className="text-red-500">Error: {error}</p>
+      </div>
+    );
+
+
+  if (!product)
+    return (
+      <div className="max-w-5xl mx-auto p-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
+        <p>Product not found.</p>
+      </div>
+    );
 
   // Convert Firestore GeoPoint to a usable object for our components
   const productLocation = product.location
@@ -107,10 +133,19 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      <div>
-        <h3 className="text-lg font-semibold mb-2">Location Information</h3>
+      {/* Location Information */}
+      <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center mb-4">
+          <div className="bg-[#f0f7f2] p-2 rounded-lg mr-3">
+            <FiMapPin className="text-[#385941]" size={20} />
+          </div>
+          <h2 className="text-xl font-semibold text-[#385941]">
+            Location Information
+          </h2>
+        </div>
+
         {productLocation ? (
-          <>
+          <div className="space-y-4">
             <LocationDisplay
               userLocation={userLocation}
               productLocation={productLocation}
@@ -120,8 +155,13 @@ const ProductDetails = () => {
             {userLocation && (
               <button
                 onClick={() => setShowNavigation(!showNavigation)}
-                className="mt-4 w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className={`flex items-center justify-center w-full md:w-auto px-6 py-2 rounded-lg ${
+                  showNavigation
+                    ? "bg-gray-100 text-gray-700"
+                    : "bg-[#94bb9f] text-white hover:bg-[#385941]"
+                } transition-colors`}
               >
+                <FiNavigation className="mr-2" />
                 {showNavigation ? "Hide Navigation" : "Navigate to Product"}
               </button>
             )}
@@ -134,35 +174,34 @@ const ProductDetails = () => {
                 />
               </div>
             )}
-          </>
+
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-3">
+                Product Location Map
+              </h3>
+              <div className="h-96 w-full rounded-lg overflow-hidden">
+                <GoogleMap
+                  userLocation={userLocation}
+                  productLocation={productLocation}
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+                />
+              </div>
+            </div>
+          </div>
         ) : (
           <p className="text-yellow-600">
             This product does not have location information.
           </p>
         )}
+
+        {locationError && (
+          <p className="mt-4 text-yellow-600">
+            <FiMapPin className="inline mr-1" />
+            Location error: {locationError}. Enable location services to see
+            your position on the map.
+          </p>
+        )}
       </div>
-
-      {/* Google Maps Section */}
-      {productLocation && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold mb-2">Product Location Map</h3>
-          <div className=" w-full">
-            <GoogleMap
-              userLocation={userLocation}
-              productLocation={productLocation}
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-              height="400px"
-            />
-          </div>
-
-          {locationError && (
-            <p className="mt-2 text-yellow-600">
-              Location error: {locationError}. Enable location services to see
-              your position on the map.
-            </p>
-          )}
-        </div>
-      )}
     </div>
   );
 };

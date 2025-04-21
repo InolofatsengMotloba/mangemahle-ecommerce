@@ -47,7 +47,11 @@ export default function PopularProducts() {
   };
 
   if (loading)
-    return <div className="py-12 text-center">Loading popular products...</div>;
+    return (
+      <div className="max-w-5xl mx-auto p-6 flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#94bb9f]"></div>
+      </div>
+    );
 
   return (
     <section className="bg-white py-12 px-4 sm:px-8">

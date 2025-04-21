@@ -170,12 +170,18 @@ function ProductsContent() {
         ))}
       </div>
 
-      {loading && <p className="text-center my-4">Loading...</p>}
+      {loading && (
+        <div className="max-w-5xl mx-auto p-6 flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#94bb9f]"></div>
+        </div>
+      )}
 
       {products.length === 0 && !loading && (
-        <p className="text-center my-4">
-          No products found matching your filters.
-        </p>
+        <div className="max-w-5xl mx-auto mt-6 p-6 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
+          <p className="text-red-500">
+            No products found matching your filters.
+          </p>
+        </div>
       )}
 
       {lastVisible && !loading && !searchQuery && (
@@ -194,10 +200,8 @@ function ProductsContent() {
 
 function ProductsLoading() {
   return (
-    <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12">
-      <div className="flex justify-center items-center h-40">
-        <p className="text-xl font-medium">Loading products...</p>
-      </div>
+    <div className="max-w-5xl mx-auto p-6 flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#94bb9f]"></div>
     </div>
   );
 }
