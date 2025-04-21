@@ -21,7 +21,7 @@ export default function MothersDayBanner() {
     <section className="relative bg-gradient-to-r from-pink-100 to-purple-100 rounded-2xl overflow-hidden my-8 mx-4 sm:mx-8">
       <div className="container mx-auto px-4 py-8 sm:py-12">
         <div className="flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 z-10 mb-6 md:mb-0">
+          <div className="md:w-1/2 z-10 mb-6 md:mb-0 ml-5">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}

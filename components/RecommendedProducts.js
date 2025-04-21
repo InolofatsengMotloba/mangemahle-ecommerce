@@ -55,12 +55,12 @@ export default function RecommendedProducts() {
     <section className="bg-white py-12 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-700">
             Recommended Products
           </h2>
           <Link
             href="/products"
-            className="text-[#2d7942] hover:text-[#26442e] font-semibold flex items-center gap-1"
+            className="text-[#94bb9f] hover:text-[#385941] font-semibold flex items-center gap-1"
           >
             View All Products
             <span>→</span>

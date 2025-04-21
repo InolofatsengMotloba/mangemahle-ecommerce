@@ -25,7 +25,7 @@ export function ImageGallery({ images }) {
         <Image
           src={images[currentIndex]}
           alt={`Product Image: ${currentIndex + 1}`}
-          className="w-full h-full object-contain bg-gray-100 transition-transform duration-500"
+          className="w-full h-full object-contain bg-[#fafafa] transition-transform duration-500"
           width={400}
           height={300}
           priority
@@ -58,7 +58,7 @@ export function ImageGallery({ images }) {
               alt={`Gallery image ${index + 1}`}
               className={`w-24 h-24 object-contain shadow-lg cursor-pointer transition-transform duration-200 ${
                 currentIndex === index
-                  ? "scale-110 border-2 bg-gray-100 border-b-black"
+                  ? "scale-110 border-2 bg-[#fafafa] border-b-black"
                   : ""
               }`}
               width={24}
