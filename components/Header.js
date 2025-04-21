@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { auth } from "../lib/firebase";
 import Logout from "./Logout";
@@ -11,12 +11,15 @@ import {
   AiOutlineShoppingCart,
   AiOutlineSearch,
 } from "react-icons/ai";
+import SearchInput from "./SearchInput";
 
 export default function Header() {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -32,6 +35,16 @@ export default function Header() {
     { name: "About Us", path: "/about-us" },
     { name: "Support", path: "/support" },
   ];
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Redirect to products page with search query
+      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
+      // setSearchQuery(""); // Optional: Clear search after submission
+      setShowMobileSearch(false); // Close mobile search if open
+    }
+  };
 
   return (
     <header className="border-b border-gray-200 relative z-50">
@@ -55,14 +68,9 @@ export default function Header() {
           </div>
 
           <div className="hidden lg:flex items-center space-x-4">
-            <div className="relative w-64">
-              <input
-                type="text"
-                placeholder="Type and hit enter"
-                className="border px-4 py-2 rounded-md text-sm focus:outline-none w-full"
-              />
-              <AiOutlineSearch className="absolute right-3 top-2.5 text-gray-400" />
-            </div>
+            <form onSubmit={handleSearch} className="w-full max-w-md">
+              <SearchInput query={searchQuery} setQuery={setSearchQuery} />
+            </form>
           </div>
         </div>
 
@@ -157,14 +165,9 @@ export default function Header() {
       {/* Mobile Search Bar */}
       {showMobileSearch && (
         <div className="lg:hidden px-4 pb-4">
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="border px-4 py-2 rounded-md text-sm focus:outline-none w-full"
-            />
-            <AiOutlineSearch className="absolute right-3 top-2.5 text-gray-400" />
-          </div>
+          <form onSubmit={handleSearch}>
+            <SearchInput query={searchQuery} setQuery={setSearchQuery} />
+          </form>
         </div>
       )}
 

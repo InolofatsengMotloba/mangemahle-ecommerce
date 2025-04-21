@@ -35,7 +35,7 @@ function ProductsContent() {
     setLoading(true);
     try {
       let url = `/api/products?${
-        search ? `search=${search}` : `page=${pageNum}`
+        search ? `search=${encodeURIComponent(search)}` : `page=${pageNum}`
       }`;
 
       if (!search && lastVisible && pageNum !== 1) {
@@ -43,7 +43,7 @@ function ProductsContent() {
       }
 
       if (sort) url += `&sort=${sort}`;
-      if (category) url += `&category=${category}`;
+      if (category) url += `&category=${encodeURIComponent(category)}`;
 
       const res = await fetch(url);
       const data = await res.json();
@@ -65,7 +65,7 @@ function ProductsContent() {
 
   useEffect(() => {
     loadProducts(1, initialSearch, initialSort, initialCategory);
-  }, [initialSearch, initialSort, initialCategory]); // Fixed the dependency array
+  }, [initialSearch, initialSort, initialCategory]);
 
   const handleSearchSort = ({ search, sort, category }) => {
     setSearchQuery(search);
@@ -138,7 +138,6 @@ function ProductsContent() {
   );
 }
 
-// Loading fallback to use within the Suspense boundary
 function ProductsLoading() {
   return (
     <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12">

@@ -19,7 +19,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
     const sort = searchParams.get("sort") || "";
-    const category = searchParams.get("category") || ""; // <-- NEW
+    const category = searchParams.get("category") || "";
     const page = parseInt(searchParams.get("page")) || 1;
     const lastVisibleId = searchParams.get("lastVisibleId");
     const limitPerPage = 20;
@@ -40,9 +40,12 @@ export async function GET(req) {
       }
 
       if (category) {
-        allProducts = allProducts.filter(
-          (product) =>
-            product.category?.toLowerCase() === category.toLowerCase()
+        // Split categories by comma and trim whitespace
+        const categories = category
+          .split(",")
+          .map((c) => c.trim().toLowerCase());
+        allProducts = allProducts.filter((product) =>
+          categories.includes(product.category?.toLowerCase())
         );
       }
 
@@ -53,8 +56,6 @@ export async function GET(req) {
       }
 
       // Handle pagination in-memory:
-      const page = parseInt(searchParams.get("page")) || 1;
-      const limitPerPage = 20;
       const paginatedProducts = allProducts.slice(
         (page - 1) * limitPerPage,
         page * limitPerPage
@@ -69,7 +70,6 @@ export async function GET(req) {
         }
       );
     }
-
 
     // Pagination path
     let q = query(productsRef, orderBy("id"), limit(limitPerPage));
@@ -114,6 +114,3 @@ export async function GET(req) {
     });
   }
 }
-
-
-
