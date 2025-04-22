@@ -2,7 +2,6 @@
 
 import "./globals.css";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { LocationProvider } from "@/contexts/LocationContext";
 import LocationPermission from "@/components/LocationPermissions";
 import { CartProvider } from "@/contexts/CartContext";
@@ -24,12 +23,18 @@ export default function RootLayout({ children }) {
         className={`${poppins.variable} font-sans antialiased flex flex-col min-h-screen`}
       >
         {/* wrap children with Suspense */}
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense
+          fallback={
+            <div className="max-w-5xl mx-auto p-6 flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#94bb9f]"></div>
+            </div>
+          }
+        >
           <LocationProvider>
             <CartProvider>
               <div className="flex flex-col flex-1">
                 <Header />
-                <main className="flex-1 sm:mb-20">{children}</main>
+                <main className="flex-1 mb-16">{children}</main>
                 {/* {!isHomePage && <Footer />} */}
               </div>
               <LocationPermission />

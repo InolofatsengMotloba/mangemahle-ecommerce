@@ -6,11 +6,7 @@ import { auth } from "../lib/firebase";
 import Logout from "./Logout";
 import LiveLocationBanner from "./LiveLocationBanner";
 import Image from "next/image";
-import {
-  AiOutlineUser,
-  AiOutlineShoppingCart,
-  AiOutlineSearch,
-} from "react-icons/ai";
+import { AiOutlineUser, AiOutlineSearch } from "react-icons/ai";
 import SearchInput from "./SearchInput";
 import {
   FiShoppingCart,
@@ -19,6 +15,7 @@ import {
   FiUser,
   FiLogIn,
 } from "react-icons/fi";
+import CartIcon from "./CartIcon";
 
 export default function Header() {
   const [user, setUser] = useState(null);
@@ -118,8 +115,11 @@ export default function Header() {
           </button>
 
           {/* Cart Icon */}
-          <Link href="/cart">
-            <AiOutlineShoppingCart size="20" className="sm:size-6" />
+          <Link
+            href="/cart"
+            className="relative flex items-center justify-center"
+          >
+            <CartIcon size={24} />
           </Link>
 
           {/* Profile Icon */}
