@@ -6,16 +6,16 @@ import {
   AiFillHome,
   AiOutlineShoppingCart,
   AiOutlineHeart,
-  AiOutlineUser,
 } from "react-icons/ai";
 import { FiShoppingBag } from "react-icons/fi";
+import CartIcon from "./CartIcon";
 
 const navItems = [
   { label: "Home", icon: <AiFillHome size={24} />, href: "/" },
   { label: "Products", icon: <FiShoppingBag size={24} />, href: "/products" },
-  { label: "Cart", icon: <AiOutlineShoppingCart size={24} />, href: "/cart" },
+  { label: "Cart", icon: <CartIcon size={24} />, href: "/cart" },
   { label: "Wishlist", icon: <AiOutlineHeart size={24} />, href: "/wishlist" },
-  { label: "Profile", icon: <AiOutlineUser size={24} />, href: "/profile" },
+  // { label: "Profile", icon: <AiOutlineUser size={24} />, href: "/profile" },
 ];
 
 const BottomNav = () => {
