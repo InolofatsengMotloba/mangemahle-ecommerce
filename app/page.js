@@ -72,7 +72,7 @@ export default function Home() {
 
             <Link href="/signin">
               <motion.button
-                className="flex items-center gap-2 border border-[#94bb9f] text-[#385941] hover:bg-gray-50 px-5 py-2.5 rounded-full text-xs sm:text-sm transition-colors duration-300"
+                className="flex items-center gap-2 border-2 border-[#94bb9f] text-[#385941] hover:bg-gray-50 px-5 py-2.5 rounded-full text-xs sm:text-sm transition-colors duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >

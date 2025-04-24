@@ -49,37 +49,46 @@ export default function RecommendedProducts() {
     }
   };
 
-  if (loading) return (
-    <div className="max-w-5xl mx-auto p-6 flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#94bb9f]"></div>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="max-w-5xl mx-auto p-6 flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#94bb9f]"></div>
+      </div>
+    );
 
   return (
     <section className="bg-white py-12 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-700">
+        <div className="flex justify-between items-center mb-6 px-2">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-700">
             Recommended Products
           </h2>
           <Link
             href="/products"
-            className="text-[#94bb9f] hover:text-[#385941] font-semibold flex items-center gap-1"
+            className="text-sm sm:text-base text-[#94bb9f] hover:text-[#385941] font-semibold flex items-center gap-1 whitespace-nowrap"
           >
-            View All Products
+            {/* Visible only on small screens */}
+            <span className="sm:hidden">View All</span>
+
+            {/* Visible on medium screens and up */}
+            <span className="hidden sm:inline">View All Products</span>
+
             <span>→</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {recommendedProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              isAdding={addingToCart === product.id}
-            />
-          ))}
+        <div className="relative">
+          <div className="flex overflow-x-auto pb-6 gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-x-visible">
+            {recommendedProducts.map((product) => (
+              <div key={product.id} className="flex-shrink-0 sm:flex-shrink">
+                <ProductCard
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  isAdding={addingToCart === product.id}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

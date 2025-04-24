@@ -5,7 +5,6 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 export default function MothersDayBanner() {
-  // Define all relevant categories for Father's Day
   const mothersDayCategories = [
     "fragrances",
     "womens-bags",
@@ -19,24 +18,25 @@ export default function MothersDayBanner() {
 
   return (
     <section className="relative bg-gradient-to-r from-pink-100 to-purple-100 rounded-2xl overflow-hidden my-8 mx-4 sm:mx-8">
-      <div className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 z-10 mb-6 md:mb-0 ml-5">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          {/* Content container */}
+          <div className="w-full md:w-1/2 z-10 md:ml-5">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-pink-800 mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-800 mb-3 sm:mb-4">
                 Mother&apos;s Day Special
               </h2>
-              <p className="text-lg text-gray-700 mb-6">
+              <p className="text-base sm:text-lg text-gray-700 mb-4 sm:mb-6">
                 Celebrate the amazing women in your life with our curated
                 collection of thoughtful gifts. Get 15% off selected items!
               </p>
               <Link
                 href={`/products?category=${mothersDayCategories}`}
-                className="inline-flex items-center px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-full transition duration-300"
+                className="inline-flex items-center justify-center px-4 py-2 sm:px-6 sm:py-3 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-full transition duration-300 text-sm sm:text-base"
               >
                 Shop Now
                 <svg
@@ -56,16 +56,21 @@ export default function MothersDayBanner() {
               </Link>
             </motion.div>
           </div>
-          <div className="md:w-1/2 relative h-64 md:h-80">
+
+          {/* Image container - now visible on all screens */}
+          <div className="w-full md:w-1/2 relative h-48 sm:h-56 md:h-64 lg:h-80">
             <Image
-              src="/mothersday.png" // Replace with your image path
+              src="/mothersday.png"
               alt="Mother's Day Gift Ideas"
               fill
               className="object-contain object-center"
               priority
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
         </div>
+
+        {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-pink-300 rounded-full opacity-20 transform translate-x-16 -translate-y-16"></div>
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-300 rounded-full opacity-20 transform -translate-x-20 translate-y-20"></div>
       </div>
