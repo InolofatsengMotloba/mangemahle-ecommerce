@@ -80,7 +80,10 @@ export default function RecommendedProducts() {
         <div className="relative">
           <div className="flex overflow-x-auto pb-6 gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6 sm:overflow-x-visible">
             {recommendedProducts.map((product) => (
-              <div key={product.id} className="flex-shrink-0 sm:flex-shrink">
+              <div
+                key={product.id}
+                className="flex-shrink-0 w-56 sm:w-full sm:flex-shrink-0"
+              >
                 <ProductCard
                   product={product}
                   onAddToCart={handleAddToCart}

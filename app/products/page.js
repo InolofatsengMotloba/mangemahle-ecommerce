@@ -159,13 +159,14 @@ function ProductsContent() {
       />
 
       {/* Product Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 pt-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 pt-6">
         {products.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
             onAddToCart={handleAddToCart}
             isAdding={addingToCart === product.id}
+            className="max-h-[200px]"
           />
         ))}
       </div>
