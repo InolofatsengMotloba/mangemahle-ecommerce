@@ -9,7 +9,7 @@ export default function ProductCard({ product, onAddToCart, isAdding }) {
   const [showModal, setShowModal] = useState(false);
 
   return (
-    <div className="relative flex flex-col border border-gray-200 shadow-sm hover:shadow-md bg-white rounded-2xl overflow-hidden transition-transform duration-300 transform hover:scale-[1.02] w-full max-h-[300px]">
+    <div className="relative flex flex-col border border-gray-200 shadow-sm hover:shadow-md bg-white rounded-2xl overflow-hidden transition-transform duration-300 transform hover:scale-[1.02] w-full sm:max-h-none max-h-[300px]">
       {/* Add Icon */}
       <button
         onClick={() => setShowModal(true)}
